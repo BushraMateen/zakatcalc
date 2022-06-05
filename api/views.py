@@ -1,3 +1,4 @@
+from http.client import LineTooLong
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -31,24 +32,25 @@ def getTable(request):
     serializer = ZakatTableSerializer(tables, many = True)
     return Response(serializer.data)
 
-@api_view(['POST'])
-def insertEntries(request):
-    tables = ZakatTable.objects.all()
-    serializer = ZakatTableSerializer(tables, many = True)
-    return Response(serializer.data)
-    # new_entry = 'formState'
-    # response = request.post( new_entry)
-    # data = response.json()
-    # serializer = ZakatTableSerializer(data=data)
-    # entry = data['formState']
-    # for i in entry:
-    #         entry_data = ZakatTable(
-    #             Line = i['intLine'],
-    #             name = i['strname'],
-    #             category = i['strcategory'],
-    #             AmtVal = i['intAmtVal'],
-    #             ZakatRate = i['decimalZakatRate'],
-    #             ZakatDue = i['decimalZakatDue']
-    #         )
-    #         entry_data.save()
-    #         return Response(serializer) 
+# @api_view(['POST'])
+# def insertEntries(request):
+#     # zakatTable = ZakatTable(
+#     #         AmtVal = request.data['formState']['A1'])
+#     # zakatTable.save()
+
+
+#     #tables = ZakatTable.objects.all()
+#     # serializer = ZakatTableSerializer(data=tables)
+#     # if serializer.is_valid():
+#     #     serializer.save()
+#     #     return Response(data=serializer.data)
+#     # return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+#     entry = request.data['formState']
+#     for i in entry.items():
+#         entry_data = ZakatTable(
+           
+#             AmtVal = i['intAmtVal']
+#         )
+#         entry_data.save()
+            
