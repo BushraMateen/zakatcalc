@@ -9,6 +9,8 @@ from rest_framework import status
 from rest_framework.parsers import JSONParser 
 from .models import  ZakatDetails
 from .serializers import  ZakatDetailsSerializer
+from .serializers import  UsermappingSerializer
+from .models import Usermapping
 
 @api_view(['GET'])
 def getRoutes(request):
@@ -37,23 +39,26 @@ def getTable(request):
 
 @api_view(['POST'])
 def insertEntries(request):
-    # zakatTable = ZakatTable(
-    #         AmtVal = request.data['formState']['A1'])
-    # zakatTable.save()
 
+    result_data = request.data['formState']
+    # call getuserid method to fetch the user id from database for given user key (result_data.formData.userid)
+    userid = getuserid(result_data['UserId'])
 
-    tables = ZakatDetails.objects.all()
-    serializer = ZakatDetailsSerializer(tables,many=True)
+    result_data.UserId = userid
+
+    serializer = ZakatDetailsSerializer(data=result_data)
     if serializer.is_valid():
         serializer.save()
-        return Response(data=serializer.data)
+        #return Response(serializer.data)
     return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
-    # entry = request.data['formState']
-    # for i in entry.items():
-    #     entry_data = ZakatDetails(
-           
-    #         AmtVal = i['intA']
-    #     )
-    #     entry_data.save()
+
+def getuserid(userkey):
+    userid = Usermapping.objects.filter(key=userkey)
+    if userid is not None:
+        return userid
+    else:
+        return (Usermapping.objects.all().order_by("-userid")[0] + 1)
+
+
             

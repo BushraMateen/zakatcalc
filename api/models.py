@@ -11,8 +11,8 @@ class ZakatTable(models.Model):
     
 
 class ZakatDetails(models.Model):
-    UserId = models.IntegerField()
-    Year = models.IntegerField()
+    UserId = models.IntegerField(null=True)
+    Year = models.IntegerField(null=True)
     ZakatRate =  models.DecimalField(max_digits=15, decimal_places=2, null=True)
     PW_PersonalCash_Hand_Bank_AmtVal =models.DecimalField(max_digits=15, decimal_places=2, null=True)
     PW_PersonalCash_Hand_Bank_ZakatDue = models.DecimalField(max_digits=15, decimal_places=2, null=True)
@@ -43,6 +43,12 @@ class ZakatDetails(models.Model):
     D_Zakat_paid_in_advance_duringYear_ZakatDue = models.DecimalField(max_digits=15, decimal_places=2, null=True)
     D_Total_Deductions_ZakatDue = models.DecimalField(max_digits=15, decimal_places=2, null=True)
     D_Remaining_Zakat_Due_ZakatDue = models.DecimalField(max_digits=15, decimal_places=2, null=True)
+
+
+class Usermapping(models.Model):
+    userid = models.IntegerField()
+    key = models.CharField(max_length = 50,null=True)
+
 
 
 
