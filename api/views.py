@@ -41,24 +41,49 @@ def getTable(request):
 def insertEntries(request):
 
     result_data = request.data['formState']
-    # call getuserid method to fetch the user id from database for given user key (result_data.formData.userid)
-    userid = getuserid(result_data['UserId'])
 
-    result_data.UserId = userid
+    #if user id is not present in db then create it in mapping table and create records in zakat details table
+    if getuserid(result_data['UserId']) == 0:
+        if Usermapping.objects.all().count() > 0:
+            userid = Usermapping.objects.all().order_by("-userid")[0].id + 1
+        else:
+            userid = 1
+        mapdata = {}
+        mapdata['key'] = result_data['UserId']
+        mapdata['userid'] = userid
 
-    serializer = ZakatDetailsSerializer(data=result_data)
-    if serializer.is_valid():
-        serializer.save()
-        #return Response(serializer.data)
-    return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        result_data['UserId'] = userid
+
+        serializer = ZakatDetailsSerializer(data=result_data)
+
+        mapserializer = UsermappingSerializer(data = mapdata)
+
+        if mapserializer.is_valid():
+            mapserializer.save()
+
+        if serializer.is_valid():
+            serializer.save()
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+        # if user id is present in db mapping table then update the corresponding zakat details table for given userid
+    else:
+        userid = getuserid(result_data['UserId'])
+        result_data['UserId'] = userid
+
+        zakat_details = ZakatDetails.objects.filter(UserId=userid)
+        # returns 1 or 0
+        zakat_details.update(**result_data)
 
 
 def getuserid(userkey):
-    userid = Usermapping.objects.filter(key=userkey)
-    if userid is not None:
-        return userid
-    else:
-        return (Usermapping.objects.all().order_by("-userid")[0] + 1)
+    #userid = Usermapping.objects.get(key=userkey).userid
+    try:
+        usermapid = Usermapping.objects.get(key=userkey).userid
+        return usermapid
+    except Usermapping.DoesNotExist:
+        return 0
+
+        
 
 
             

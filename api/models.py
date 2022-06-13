@@ -42,7 +42,8 @@ class ZakatDetails(models.Model):
     D_Outstanding_necessary_debts_ZakatDue = models.DecimalField(max_digits=15, decimal_places=2, null=True)
     D_Zakat_paid_in_advance_duringYear_ZakatDue = models.DecimalField(max_digits=15, decimal_places=2, null=True)
     D_Total_Deductions_ZakatDue = models.DecimalField(max_digits=15, decimal_places=2, null=True)
-    D_Remaining_Zakat_Due_ZakatDue = models.DecimalField(max_digits=15, decimal_places=2, null=True)
+    D_Remaining_Zakat_Due_ZakatDue = models.DecimalField(max_digits=15, decimal_places=2, null=True)    
+    modified_date = models.DateTimeField(null=True)
 
 
 class Usermapping(models.Model):
