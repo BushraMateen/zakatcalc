@@ -1,5 +1,6 @@
 from http.client import LineTooLong
 from tkinter.tix import Tree
+from django.db import connection
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -11,6 +12,8 @@ from .models import  ZakatDetails
 from .serializers import  ZakatDetailsSerializer
 from .serializers import  UsermappingSerializer
 from .models import Usermapping
+from django.db import connection
+from decimal import *
 
 @api_view(['GET'])
 def getRoutes(request):
@@ -63,6 +66,8 @@ def insertEntries(request):
 
         if serializer.is_valid():
             serializer.save()
+
+        calculateZakat(userid , 90)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
         # if user id is present in db mapping table then update the corresponding zakat details table for given userid
@@ -73,7 +78,8 @@ def insertEntries(request):
         zakat_details = ZakatDetails.objects.filter(UserId=userid)
         # returns 1 or 0
         zakat_details.update(**result_data)
-
+        calculateZakat(userid, 90)
+    return Response("successfully calculated")
 
 def getuserid(userkey):
     #userid = Usermapping.objects.get(key=userkey).userid
@@ -82,6 +88,11 @@ def getuserid(userkey):
         return usermapid
     except Usermapping.DoesNotExist:
         return 0
+
+def calculateZakat(userid, nisab):
+    SQL = 'call calculatezakat('+ str(userid) + ',' + str(nisab) +')'
+    with connection.cursor() as curs:
+        curs.execute(SQL)
 
         
 
