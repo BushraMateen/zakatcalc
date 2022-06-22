@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+import django_heroku
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-hwl+91p^pgdr9q!0abwcg=ds-^@05#e9br1rl1zzr+lo*+rua*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -80,13 +82,24 @@ WSGI_APPLICATION = 'zakatcalc.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'zakatdb',
+#         'USER' : 'postgres',
+#         'PASSWORD' : 'bushra',
+#         'HOST' : 'localhost',
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'zakatdb',
-        'USER' : 'postgres',
-        'PASSWORD' : 'bushra',
-        'HOST' : 'localhost',
+        'NAME': 'dcgbi5vjd9k2q4',
+        'USER' : 'hutyixwgglsqep',
+        'PASSWORD' : '82b061975cd1c308df0f20b3310ade482044c6308d391f632ff55ea2a8bfbc41',
+        'PORT': 5432,
+        'HOST' : 'ec2-34-200-35-222.compute-1.amazonaws.com',
     }
 }
 
@@ -128,6 +141,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+django_heroku.settings(locals())
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

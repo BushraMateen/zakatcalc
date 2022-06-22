@@ -1,6 +1,4 @@
-from http.client import LineTooLong
-from tkinter.tix import Tree
-from django.db import connection
+
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -34,8 +32,11 @@ def getRoutes(request):
     ]
     return Response(routes)
 
+
 @api_view(['GET'])
 def getTable(request):
+    """displaying table from db to ui"""
+
     tables =  ZakatDetails.objects.all()
     serializer = ZakatDetailsSerializer(tables, many = True)
     return Response(serializer.data)
@@ -45,7 +46,7 @@ def insertEntries(request):
 
     result_data = request.data['formState']
 
-    #if user id is not present in db then create it in mapping table and create records in zakat details table
+    """if user id is not present in db then create it in mapping table and create records in zakat details table """
     if getuserid(result_data['UserId']) == 0:
         if Usermapping.objects.all().count() > 0:
             userid = Usermapping.objects.all().order_by("-userid")[0].id + 1
@@ -70,7 +71,7 @@ def insertEntries(request):
         calculateZakat(userid , 90)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
-        # if user id is present in db mapping table then update the corresponding zakat details table for given userid
+        """ if user id is present in db mapping table then update the corresponding zakat details table for given userid """
     else:
         userid = getuserid(result_data['UserId'])
         result_data['UserId'] = userid
@@ -82,7 +83,7 @@ def insertEntries(request):
     return Response("successfully calculated")
 
 def getuserid(userkey):
-    #userid = Usermapping.objects.get(key=userkey).userid
+    """userid = Usermapping.objects.get(key=userkey).userid """
     try:
         usermapid = Usermapping.objects.get(key=userkey).userid
         return usermapid
@@ -90,6 +91,10 @@ def getuserid(userkey):
         return 0
 
 def calculateZakat(userid, nisab):
+    """
+    stored procedure is called written in db
+
+    """
     SQL = 'call calculatezakat('+ str(userid) + ',' + str(nisab) +')'
     with connection.cursor() as curs:
         curs.execute(SQL)
