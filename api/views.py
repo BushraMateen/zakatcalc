@@ -12,6 +12,7 @@ from .serializers import  UsermappingSerializer
 from .models import Usermapping
 from django.db import connection
 from decimal import *
+import asyncio
 
 @api_view(['GET'])
 def getRoutes(request):
@@ -41,6 +42,15 @@ def getTable(request):
     serializer = ZakatDetailsSerializer(tables, many = True)
     return Response(serializer.data)
 
+@api_view(['GET'])
+def getTablebyid(request,key):
+    """displaying table from db to ui"""
+
+    userid = getuserid(key)
+    tables =  ZakatDetails.objects.filter(UserId=userid)
+    serializer = ZakatDetailsSerializer(tables, many = True)
+    return Response(serializer.data)
+
 @api_view(['POST'])
 def insertEntries(request):
 
@@ -48,15 +58,22 @@ def insertEntries(request):
 
     """if user id is not present in db then create it in mapping table and create records in zakat details table """
     if getuserid(result_data['UserId']) == 0:
-        if Usermapping.objects.all().count() > 0:
-            userid = Usermapping.objects.all().order_by("-userid")[0].id + 1
+        if  Usermapping.objects.all().count() > 0:
+            userid =  Usermapping.objects.all().order_by("-userid")[0].id + 1
         else:
             userid = 1
         mapdata = {}
         mapdata['key'] = result_data['UserId']
         mapdata['userid'] = userid
+        mapdata['name'] = result_data['name']
+        mapdata['email_field'] = result_data['email_field']
 
         result_data['UserId'] = userid
+
+        if 'name' in result_data:
+            del result_data['name']
+        if 'email_field' in result_data:
+            del result_data['email_field']
 
         serializer = ZakatDetailsSerializer(data=result_data)
 
@@ -75,6 +92,11 @@ def insertEntries(request):
     else:
         userid = getuserid(result_data['UserId'])
         result_data['UserId'] = userid
+
+        if 'name' in result_data:
+            del result_data['name']
+        if 'email_field' in result_data:
+            del result_data['email_field']
 
         zakat_details = ZakatDetails.objects.filter(UserId=userid)
         # returns 1 or 0
@@ -98,6 +120,8 @@ def calculateZakat(userid, nisab):
     SQL = 'call calculatezakat('+ str(userid) + ',' + str(nisab) +')'
     with connection.cursor() as curs:
         curs.execute(SQL)
+
+
 
         
 
