@@ -13,7 +13,7 @@ class ZakatTable(models.Model):
 class ZakatDetails(models.Model):
     UserId = models.IntegerField(null=True)
     Year = models.IntegerField(null=True)
-    ZakatRate =  models.DecimalField(max_digits=15, decimal_places=2, null=True)
+    ZakatRate =  models.DecimalField(max_digits=15, decimal_places=3, null=True)
     PW_PersonalCash_Hand_Bank_AmtVal =models.DecimalField(max_digits=15, decimal_places=2, null=True)
     PW_PersonalCash_Hand_Bank_ZakatDue = models.DecimalField(max_digits=15, decimal_places=2, null=True)
     PW_TotalValueof_Gold_silver_AmtVal = models.DecimalField(max_digits=15, decimal_places=2, null=True)
@@ -49,6 +49,8 @@ class ZakatDetails(models.Model):
 class Usermapping(models.Model):
     userid = models.IntegerField()
     key = models.CharField(max_length = 50,null=True)
+    email_field = models.EmailField(max_length = 254,null=True)
+    name = models.CharField(max_length = 500,null=True)
 
 
 
